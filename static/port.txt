@@ -1,0 +1,4 @@
+dotnet watch run <custom-port>
+Eg:-
+dotnet watch run 8000
+# default no port given means localhost:5141 only

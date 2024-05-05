@@ -10,12 +10,14 @@ using System;
 
 public class Startup
 {
+    // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
         // Enable CORS
         services.AddCors();
     }
 
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
@@ -237,11 +239,14 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        // Parse command-line arguments for custom port
+        string port = args.Length > 0 ? args[0] : null;
+
         // Initialize SQLite database
         InitializeDatabase();
         
         // Build and run the web host
-        CreateHostBuilder(args).Build().Run();
+        CreateHostBuilder(args, port).Build().Run();
     }
 
     // Method to initialize the SQLite database
@@ -265,10 +270,16 @@ public class Program
     }
 
     // Method to create a new instance of the web host
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
+    public static IHostBuilder CreateHostBuilder(string[] args, string port)
+    {
+        return Host.CreateDefaultBuilder(args)
             .ConfigureWebHostDefaults(webBuilder =>
             {
-                webBuilder.UseStartup<Startup>(); 
+                webBuilder.UseStartup<Startup>();
+                if (!string.IsNullOrEmpty(port))
+                {
+                    webBuilder.UseUrls($"http://localhost:{port}");
+                }
             });
+    }
 }
